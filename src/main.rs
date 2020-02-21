@@ -1,15 +1,14 @@
 use std::env;
 use std::io::{self, Write};
 use std::net::{IpAddr, TcpStream};
-use std::str::FromStr;
 use std::process;
-use std::sync::mpsc::{Sender, channel};
+use std::str::FromStr;
+use std::sync::mpsc::{channel, Sender};
 use std::thread;
-
-mod utils;
 
 use utils::output_handler::print_data;
 
+mod utils;
 
 const MAX: u16 = 65535;
 
@@ -28,17 +27,15 @@ impl EnvArguments {
         }
         let f = args[1].clone();
         if let Ok(ipaddr) = IpAddr::from_str(&f) {
-            return Ok(EnvArguments {flag: String::from(""), ipaddr, threads: 4});
+            return Ok(EnvArguments { flag: String::from(""), ipaddr, threads: 4 });
         } else {
             let flag = args[1].clone();
             if flag.contains("-h") || flag.contains("-help") && args.len() == 2 {
                 println!("Usage: -j to select how many threads you want
                 \n\r       -h or -help to show this help message");
                 return Err("help");
-
             } else if flag.contains("-h") || flag.contains("-help") {
                 return Err("too many arguments");
-
             } else if flag.contains("-j") {
                 if args.len() < 4 {
                     return Err("No provided ip address");
@@ -47,12 +44,11 @@ impl EnvArguments {
                     Ok(s) => s,
                     Err(_) => return Err("not a valid IPADDR; must be IPv4 or IPv6")
                 };
-                let threads = match args[2].parse::<u16>(){
+                let threads = match args[2].parse::<u16>() {
                     Ok(s) => s,
                     Err(_) => return Err("failed to parse thread number")
                 };
-                return Ok(EnvArguments{threads, flag, ipaddr});
-
+                return Ok(EnvArguments { threads, flag, ipaddr });
             } else {
                 return Err("invalid syntax");
             }
