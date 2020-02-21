@@ -6,6 +6,11 @@ use std::process;
 use std::sync::mpsc::{Sender, channel};
 use std::thread;
 
+mod utils;
+
+use utils::output_handler::print_data;
+
+
 const MAX: u16 = 65535;
 
 struct EnvArguments {
@@ -56,7 +61,7 @@ impl EnvArguments {
     }
 }
 
-fn scan(tx: Sender<u16>, start_port: u16, addr: IpAddr, num_threads: u16) {
+fn scan_addr(tx: Sender<u16>, start_port: u16, addr: IpAddr, num_threads: u16) {
     let mut port: u16 = start_port + 1;
     loop {
         match TcpStream::connect((addr, port)) {
@@ -82,12 +87,10 @@ fn main() {
     let program = args[0].clone();
     let args = EnvArguments::new(&args).unwrap_or_else(
         |err| {
-            if err.contains("help") {
-                process::exit(0);
-            } else {
+            if !err.contains("help") {
                 eprintln!("{} problem parsing arguments: {}", program, err);
-                process::exit(0);
             }
+            process::exit(0);
         }
     );
 
@@ -98,7 +101,7 @@ fn main() {
         let tx = tx.clone();
 
         thread::spawn(move || {
-            scan(tx, i, addr, num_threads);
+            scan_addr(tx, i, addr, num_threads);
         });
     }
 
@@ -110,7 +113,7 @@ fn main() {
 
     println!("");
     out.sort();
-    for v in out {
-        println!("{} is open", v);
-    }
+    print_data(out);
+
+
 }
