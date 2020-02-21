@@ -111,7 +111,7 @@ fn main() {
         out.push(p);
     }
 
-    println!();
+
     out.sort();
     print_data(out);
 
