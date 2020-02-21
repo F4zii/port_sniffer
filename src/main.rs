@@ -18,7 +18,7 @@ impl EnvArguments {
     fn new(args: &[String]) -> Result<EnvArguments, &'static str> {
         if args.len() < 2 {
             return Err("not enough arguments");
-        } else if args.len() > 3 {
+        } else if args.len() > 4 {
             return Err("too many arguments");
         }
         let f = args[1].clone();
@@ -35,10 +35,10 @@ impl EnvArguments {
                 return Err("too many arguments");
 
             } else if flag.contains("-j") {
-                if args.len() < 3 {
+                if args.len() < 4 {
                     return Err("No provided ip address");
                 }
-                let ipaddr = match IpAddr::from_str(&args[2]) {
+                let ipaddr = match IpAddr::from_str(&args[3]) {
                     Ok(s) => s,
                     Err(_) => return Err("not a valid IPADDR; must be IPv4 or IPv6")
                 };
@@ -80,7 +80,7 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     println!("{:?}", args);
     let program = args[0].clone();
-    let EnvArguments = EnvArguments::new(&args).unwrap_or_else(
+    let args = EnvArguments::new(&args).unwrap_or_else(
         |err| {
             if err.contains("help") {
                 process::exit(0);
@@ -91,8 +91,8 @@ fn main() {
         }
     );
 
-    let num_threads = EnvArguments.threads;
-    let addr = EnvArguments.ipaddr;
+    let num_threads = args.threads;
+    let addr = args.ipaddr;
     let (tx, rx) = channel();
     for i in 0..num_threads {
         let tx = tx.clone();
