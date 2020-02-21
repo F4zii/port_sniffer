@@ -18,7 +18,7 @@ impl EnvArguments {
     fn new(args: &[String]) -> Result<EnvArguments, &'static str> {
         if args.len() < 2 {
             return Err("not enough arguments");
-        } else if args.len() > 4 {
+        } else if args.len() > 3 {
             return Err("too many arguments");
         }
         let f = args[1].clone();
@@ -35,10 +35,10 @@ impl EnvArguments {
                 return Err("too many arguments");
 
             } else if flag.contains("-j") {
-                if args.len() < 4 {
+                if args.len() < 3 {
                     return Err("No provided ip address");
                 }
-                let ipaddr = match IpAddr::from_str(&args[3]) {
+                let ipaddr = match IpAddr::from_str(&args[2]) {
                     Ok(s) => s,
                     Err(_) => return Err("not a valid IPADDR; must be IPv4 or IPv6")
                 };
@@ -78,6 +78,7 @@ fn scan(tx: Sender<u16>, start_port: u16, addr: IpAddr, num_threads: u16) {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
+    println!("{:?}", args);
     let program = args[0].clone();
     let EnvArguments = EnvArguments::new(&args).unwrap_or_else(
         |err| {
