@@ -42,7 +42,7 @@ impl EnvArguments {
                 return Err("help".to_string());
             } else if &flag == "-h" || &flag == "help" {
                 return Err("too many arguments".to_string());
-            } else if &flag == "j" {
+            } else if &flag == "-j" {
                 if args.len() < 4 {
                     return Err("No provided ip address".to_string());
                 }
@@ -84,6 +84,7 @@ fn scan_addr(tx: Sender<u16>, start_port: u16, addr: IpAddr, num_threads: u16) {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
+    println!("{:?}", args);
     let program = args[0].clone();
     let args = EnvArguments::new(&args).unwrap_or_else(
         |err| {
