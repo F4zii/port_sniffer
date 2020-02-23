@@ -19,6 +19,7 @@ struct EnvArguments {
     flag: String,
     ipaddr: IpAddr,
     threads: u16,
+    // port: u16,
 }
 
 impl EnvArguments {
